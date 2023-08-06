@@ -1,13 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 async function main() {
-  const john = await prisma.user.upsert({
-    where: { username: "John" },
-    update: {},
-    create: {
-      username: "John",
-    },
-  });
   const warAndPeace = await prisma.book.upsert({
     where: { id: 1 },
     update: {},
@@ -28,7 +21,25 @@ async function main() {
       text: "\nMy dear old doll! I was such a shy little thing that I seldom dared to open my lips, and never dared to open my heart, to anybody else. It almost makes me cry to think what a relief it used to be to me when I came home from school of a day to run upstairs to my room and say, 'Oh, you dear faithful Dolly, I knew you would be expecting me!' and then to sit down on the floor, leaning on the elbow of her great chair, and tell her all I had noticed since we parted. I had always rather a noticing way—not a quick way, oh, no!—a silent way of noticing what passed before me and thinking I should like to understand it better. I have not by any means a quick understanding. When I love a person very tenderly indeed, it seems to brighten. But even that may be my vanity.\n\nI was brought up, from my earliest remembrance—like some of the princesses in the fairy stories, only I was not charming—by my godmother. At least, I only knew her as such. She was a good, good woman! She went to church three times every Sunday, and to morning prayers on Wednesdays and Fridays, and to lectures whenever there were lectures; and never missed. She was handsome; and if she had ever smiled, would have been (I used to think) like an angel—but she never smiled. She was always grave and strict. She was so very good herself, I thought, that the badness of other people made her frown all her life. I felt so different from her, even making every allowance for the differences between a child and a woman; I felt so poor, so trifling, and so far off that I never could be unrestrained with her—no, could never even love her as I wished. It made me very sorry to consider how good she was and how unworthy of her I was, and I used ardently to hope that I might have a better heart; and I talked it over very often with the dear old doll, but I never loved my godmother as I ought to have loved her and as I felt I must have loved her if I had been a bett",
     },
   });
-  console.log({ warAndPeace, john, bleakHouse });
+  const john = await prisma.user.upsert({
+    where: { username: "John" },
+    update: {},
+    create: {
+      username: "John",
+    },
+  });
+  const poem = await prisma.poem.upsert({
+    where: { id: 1 },
+    update: {},
+    create: {
+      id: 1,
+      passage: "ASDF",
+      authorId: 1,
+      bookId: 1,
+      startIdx: 1,
+    },
+  });
+  console.log({ warAndPeace, john, bleakHouse, poem });
 }
 main()
   .then(async () => {

@@ -1,8 +1,19 @@
 -- CreateTable
+CREATE TABLE "User" (
+    "id" SERIAL NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "username" TEXT NOT NULL,
+    "name" TEXT,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Book" (
     "id" SERIAL NOT NULL,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
     "author" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "text" TEXT NOT NULL,
@@ -13,6 +24,8 @@ CREATE TABLE "Book" (
 -- CreateTable
 CREATE TABLE "TextChunk" (
     "id" SERIAL NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
     "text" TEXT NOT NULL,
     "isSelected" BOOLEAN NOT NULL DEFAULT false,
     "poemId" INTEGER NOT NULL,
@@ -23,8 +36,8 @@ CREATE TABLE "TextChunk" (
 -- CreateTable
 CREATE TABLE "Poem" (
     "id" SERIAL NOT NULL,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
     "passage" TEXT NOT NULL,
     "startIdx" INTEGER NOT NULL,
     "bookId" INTEGER NOT NULL,
@@ -34,6 +47,9 @@ CREATE TABLE "Poem" (
 
     CONSTRAINT "Poem_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 
 -- AddForeignKey
 ALTER TABLE "TextChunk" ADD CONSTRAINT "TextChunk_poemId_fkey" FOREIGN KEY ("poemId") REFERENCES "Poem"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
