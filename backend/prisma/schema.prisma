@@ -11,7 +11,42 @@ datasource db {
 }
 
 model User {
+  id       Int     @id @default(autoincrement())
+  username String  @unique
+  name     String?
+  Poem     Poem[]
+}
+
+model Book {
   id         Int      @id @default(autoincrement())
-  username   String   @unique
-  name       String?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  author     String
+  title      String
+  text       String
+  Poem       Poem[]
+}
+
+model TextChunk {
+  id         Int     @id @default(autoincrement())
+  text       String
+  isSelected Boolean @default(false)
+  poem       Poem    @relation(fields: [poemId], references: [id])
+  poemId     Int
+}
+
+model Poem {
+  id         Int      @id @default(autoincrement())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  passage      String
+  startIdx     Int
+  book         Book        @relation(fields: [bookId], references: [id])
+  bookId       Int
+  author       User        @relation(fields: [authorId], references: [id])
+  authorId     Int
+  colorRange   Int         @default(0)
+  backgroundId Int         @default(1)
+  TextChunk    TextChunk[]
 }
