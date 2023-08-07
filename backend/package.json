@@ -4,6 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "npm run build:reflection && tsc src/index.ts",
+    "build:reflection": "NEXUS_SHOULD_EXIT_AFTER_REFLECTION=true ts-node src",
+    "dev": "ts-node-dev --transpile-only src",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

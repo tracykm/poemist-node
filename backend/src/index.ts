@@ -1,15 +1,10 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
-import { context } from "./context";
-const express = require("express");
-
-const app = express();
-// instance of prisma client
-
-// graphql
+import { context } from "./graphql/context";
 import { graphqlHTTP } from "express-graphql";
-import { schema } from "./schema";
+import { schema } from "./graphql/schema";
 
+const express = require("express");
+const app = express();
 // using graphqlHTTP middleware
 app.use(
   "/graphql",
