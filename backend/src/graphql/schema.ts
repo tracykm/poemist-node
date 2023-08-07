@@ -38,6 +38,17 @@ const query = queryType({
       },
     });
 
+    t.nonNull.field("currentUser", {
+      type: UserType,
+      resolve(_, args, ctx) {
+        return ctx.prisma.user.findUnique({
+          where: {
+            id: ctx.user.id,
+          },
+        });
+      },
+    });
+
     t.nonNull.field("poem", {
       type: PoemType,
       args: {

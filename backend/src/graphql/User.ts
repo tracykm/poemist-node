@@ -15,3 +15,11 @@ export const UserType = objectType({
     });
   },
 });
+
+export const TokenType = objectType({
+  name: "TokenType",
+  description: "JWT token",
+  definition(t) {
+    t.string("token");
+  },
+});

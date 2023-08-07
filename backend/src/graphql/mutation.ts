@@ -1,13 +1,32 @@
 import { extendType, intArg, list, nonNull, stringArg } from "nexus";
-import { UserType } from "./User";
+import { TokenType, UserType } from "./User";
 import { PoemType } from "./Poem";
 import { TextChunkInputType, TextChunkType } from "./TextChunk";
 import { Context } from "vm";
 import { PrismaClient } from "@prisma/client";
+import { generateAccessToken } from "../auth";
 
 export const Mutation = extendType({
   type: "Mutation",
   definition(t) {
+    t.field("tokenAuth", {
+      type: TokenType,
+      args: {
+        username: nonNull(stringArg()),
+      },
+      async resolve(_root, args, ctx) {
+        const { username } = args;
+        const prisma = ctx.prisma as PrismaClient;
+        const user = await prisma.user.findUnique({ where: { username } });
+        if (!user) {
+          throw new Error("User not found");
+        }
+        return {
+          token: generateAccessToken(user),
+        };
+      },
+    });
+
     t.field("createUser", {
       type: UserType,
       args: {
@@ -39,7 +58,7 @@ export const Mutation = extendType({
             startIdx,
             bookId,
             passage,
-            authorId: 1,
+            authorId: ctx.user.id,
           },
         });
         textChunks.forEach(async (textChunk: any) => {
