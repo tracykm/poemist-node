@@ -4,6 +4,7 @@ import { DateTimeResolver } from "graphql-scalars";
 import { BookType } from "./Book";
 import { PoemType } from "./Poem";
 import { UserType } from "./User";
+import { Mutation } from "./mutation";
 
 const DateTime = asNexusMethod(DateTimeResolver, "datetime");
 
@@ -13,6 +14,13 @@ const query = queryType({
       type: UserType,
       resolve(_, __, ctx) {
         return ctx.prisma.user.findMany();
+      },
+    });
+
+    t.nonNull.list.nonNull.field("poems", {
+      type: PoemType,
+      resolve(_, __, ctx) {
+        return ctx.prisma.poem.findMany();
       },
     });
 
@@ -57,7 +65,7 @@ const query = queryType({
 });
 
 export const schema = makeSchema({
-  types: [query, DateTime],
+  types: [query, Mutation, DateTime],
   contextType: {
     // Path to the module where the context type is exported
     module: join(__dirname, "./context.ts"),

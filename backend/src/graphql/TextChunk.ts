@@ -1,4 +1,4 @@
-import { objectType } from "nexus";
+import { inputObjectType, objectType } from "nexus";
 import { TextChunk } from "nexus-prisma";
 
 export const TextChunkType = objectType({
@@ -8,5 +8,13 @@ export const TextChunkType = objectType({
     t.field(TextChunk.id);
     t.field(TextChunk.text);
     t.field(TextChunk.isSelected);
+  },
+});
+
+export const TextChunkInputType = inputObjectType({
+  name: "TextChunkInputType",
+  definition(t) {
+    t.boolean("isSelected");
+    t.nonNull.string("text");
   },
 });
