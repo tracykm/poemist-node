@@ -1,7 +1,7 @@
 import { extendType, intArg, list, nonNull, stringArg } from "nexus";
 import { TokenType, UserType } from "./User";
 import { PoemType } from "./Poem";
-import { TextChunkInputType, TextChunkType } from "./TextChunk";
+import { TextChunkInputType } from "./TextChunk";
 import { Context } from "vm";
 import { PrismaClient } from "@prisma/client";
 import { checkPassword, generateAccessToken, hashPassword } from "../auth";

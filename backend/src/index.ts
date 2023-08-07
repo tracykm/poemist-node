@@ -6,6 +6,7 @@ import { authenticateToken } from "./auth";
 
 const express = require("express");
 const app = express();
+
 // using graphqlHTTP middleware
 app.use(
   "/graphql",
@@ -26,10 +27,9 @@ app.use(
 
 // middlewares
 app.use(express.json());
-// app.use(authenticateToken);
 
 app.get("/", async (req: Request, res: Response) => {
-  return res.status(200).json({ success: true, boo: "ha" });
+  return res.status(200).json({ success: true });
 });
 
 app.listen(3000, () => {

@@ -1,4 +1,11 @@
-import { asNexusMethod, intArg, makeSchema, nonNull, queryType } from "nexus";
+import {
+  asNexusMethod,
+  connectionPlugin,
+  intArg,
+  makeSchema,
+  nonNull,
+  queryType,
+} from "nexus";
 import { join } from "path";
 import { DateTimeResolver } from "graphql-scalars";
 import { BookType } from "./Book";
@@ -10,17 +17,13 @@ const DateTime = asNexusMethod(DateTimeResolver, "datetime");
 
 const query = queryType({
   definition(t) {
-    t.nonNull.list.nonNull.field("users", {
+    (t as any).connectionField("userPages", {
       type: UserType,
-      resolve(_, __, ctx) {
-        return ctx.prisma.user.findMany();
+      nodes(...args: any[]) {
+        return args[2].prisma.user.findMany();
       },
-    });
-
-    t.nonNull.list.nonNull.field("poems", {
-      type: PoemType,
-      resolve(_, __, ctx) {
-        return ctx.prisma.poem.findMany();
+      totalCount(_: any, args: any, ctx: any) {
+        return ctx.prisma.user.count();
       },
     });
 
@@ -35,6 +38,21 @@ const query = queryType({
             id: args.id,
           },
         });
+      },
+    });
+
+    (t as any).connectionField("poemPages", {
+      type: PoemType,
+      additionalArgs: {
+        authorId: intArg(),
+      },
+      nodes(_: any, args: any, ctx: any) {
+        const authorId = args.authorId;
+        return ctx.prisma.poem.findMany({ where: { authorId } });
+      },
+      totalCount(_: any, args: any, ctx: any) {
+        const authorId = args.authorId;
+        return ctx.prisma.poem.count({ where: { authorId } });
       },
     });
 
@@ -77,6 +95,13 @@ const query = queryType({
 
 export const schema = makeSchema({
   types: [query, Mutation, DateTime],
+  plugins: [
+    connectionPlugin({
+      extendConnection: {
+        totalCount: { type: "Int" },
+      },
+    }),
+  ],
   contextType: {
     // Path to the module where the context type is exported
     module: join(__dirname, "./context.ts"),
