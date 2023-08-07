@@ -20,7 +20,7 @@ model User {
   updatedAt DateTime @updatedAt
 
   username     String  @unique
-  passwordHash String
+  passwordHash String  @default("")
   name         String?
   poems        Poem[]
 }
