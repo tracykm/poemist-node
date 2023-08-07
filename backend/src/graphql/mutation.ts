@@ -59,15 +59,26 @@ export const Mutation = extendType({
         bookId: nonNull(intArg()),
         startIdx: nonNull(intArg()),
         passage: nonNull(stringArg()),
+        colorRange: intArg(),
+        backgroundId: intArg(),
       },
       async resolve(_root, args, ctx: Context) {
         const prisma = ctx.prisma as PrismaClient;
-        const { textChunks, startIdx, bookId, passage } = args;
+        const {
+          textChunks,
+          startIdx,
+          bookId,
+          passage,
+          colorRange,
+          backgroundId,
+        } = args;
         const poem = await prisma.poem.create({
           data: {
             startIdx,
             bookId,
             passage,
+            colorRange,
+            backgroundId,
             authorId: ctx.user.id,
           },
         });
@@ -75,6 +86,65 @@ export const Mutation = extendType({
           await prisma.textChunk.create({
             data: { ...textChunk, poemId: poem.id },
           });
+        });
+        return poem;
+      },
+    });
+
+    t.field("updatePoem", {
+      type: PoemType,
+      args: {
+        id: nonNull(intArg()),
+        textChunks: list(TextChunkInputType),
+        colorRange: intArg(),
+        backgroundId: intArg(),
+      },
+      async resolve(_root, args, ctx: Context) {
+        const prisma = ctx.prisma as PrismaClient;
+        const { id, textChunks, colorRange, backgroundId } = args;
+        const poem = await prisma.poem.update({
+          where: { id, authorId: ctx.user.id },
+          data: {
+            colorRange,
+            backgroundId,
+            authorId: ctx.user.id,
+          },
+        });
+        if (!textChunks) return poem;
+        await prisma.textChunk.deleteMany({
+          where: { poemId: poem.id },
+        });
+        textChunks.forEach(async (textChunk: any) => {
+          await prisma.textChunk.create({
+            data: { ...textChunk, poemId: poem.id },
+          });
+        });
+        return poem;
+      },
+    });
+
+    t.field("deletePoem", {
+      type: PoemType,
+      args: {
+        id: nonNull(intArg()),
+      },
+      async resolve(_root, args, ctx: Context) {
+        const prisma = ctx.prisma as PrismaClient;
+        const { id } = args;
+        const poem = await prisma.poem.findUnique({
+          where: { id },
+        });
+        if (!poem) {
+          throw new Error("Poem not found");
+        }
+        if (poem.authorId !== ctx.user.id) {
+          throw new Error("You are not the author of this poem");
+        }
+        await prisma.textChunk.deleteMany({
+          where: { poemId: poem.id },
+        });
+        await prisma.poem.delete({
+          where: { id },
         });
         return poem;
       },

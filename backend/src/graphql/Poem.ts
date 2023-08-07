@@ -10,6 +10,10 @@ export const PoemType = objectType({
   definition(t) {
     t.field(Poem.id);
     t.field(Poem.passage);
+    t.field(Poem.colorRange);
+    t.field(Poem.backgroundId);
+    t.field(Poem.createdAt);
+    t.field(Poem.updatedAt);
     t.field({
       ...Poem.textChunks,
       type: list(TextChunkType),
