@@ -52,7 +52,7 @@ model Poem {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  passage      String
+  passage      String?
   startIdx     Int
   book         Book        @relation(fields: [bookId], references: [id])
   bookId       Int

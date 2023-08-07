@@ -1,17 +1,17 @@
-import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
+import * as jwt from "jsonwebtoken";
+import * as bcrypt from "bcrypt";
 
 export function authenticateToken(authHeader: string) {
   const token = authHeader && authHeader.split(" ")[1];
 
   if (!token) return;
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     jwt.verify(
       token,
       process.env.TOKEN_SECRET as string,
       (err: any, data: any) => {
-        if (err) return reject(err);
+        if (err) return resolve(undefined);
         resolve(data.user);
       }
     );

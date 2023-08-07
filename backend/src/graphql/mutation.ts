@@ -58,7 +58,7 @@ export const Mutation = extendType({
         textChunks: list(TextChunkInputType),
         bookId: nonNull(intArg()),
         startIdx: nonNull(intArg()),
-        passage: nonNull(stringArg()),
+        passage: stringArg(),
         colorRange: intArg(),
         backgroundId: intArg(),
       },

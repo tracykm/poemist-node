@@ -10,5 +10,10 @@ export const BookType = objectType({
     t.field(Book.author);
     t.field(Book.text);
     t.field(Book.createdAt);
+    t.nonNull.int("startIdx", {
+      resolve: (root, args, ctx) => {
+        return 0; // TODO implement
+      },
+    });
   },
 });

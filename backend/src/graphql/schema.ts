@@ -56,9 +56,10 @@ const query = queryType({
       },
     });
 
-    t.nonNull.field("currentUser", {
+    t.field("currentUser", {
       type: UserType,
       resolve(_, args, ctx) {
+        if (!ctx.user) return null;
         return ctx.prisma.user.findUnique({
           where: {
             id: ctx.user.id,
