@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
 export function authenticateToken(authHeader: string) {
   const token = authHeader && authHeader.split(" ")[1];
@@ -20,5 +21,29 @@ export function authenticateToken(authHeader: string) {
 export function generateAccessToken(user: { username: string }) {
   return jwt.sign({ user }, process.env.TOKEN_SECRET as string, {
     expiresIn: "90m",
+  });
+}
+
+export function hashPassword(password: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    bcrypt.hash(password, 10, (err, passwordHash) => {
+      if (err) return reject(err);
+      resolve(passwordHash);
+    });
+  });
+}
+
+export function checkPassword({
+  password,
+  passwordHash,
+}: {
+  password: string;
+  passwordHash: string;
+}): Promise<boolean> {
+  return new Promise((resolve, reject) => {
+    bcrypt.compare(password, passwordHash, function (err, res) {
+      if (err) return reject(err);
+      resolve(res);
+    });
   });
 }

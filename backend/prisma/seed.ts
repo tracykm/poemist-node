@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { hashPassword } from "../src/auth";
 const prisma = new PrismaClient();
 async function main() {
   await prisma.book.upsert({
@@ -26,6 +27,7 @@ async function main() {
     update: {},
     create: {
       username: "John",
+      passwordHash: await hashPassword("asdf"),
     },
   });
   await prisma.poem.upsert({

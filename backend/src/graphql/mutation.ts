@@ -4,7 +4,7 @@ import { PoemType } from "./Poem";
 import { TextChunkInputType, TextChunkType } from "./TextChunk";
 import { Context } from "vm";
 import { PrismaClient } from "@prisma/client";
-import { generateAccessToken } from "../auth";
+import { checkPassword, generateAccessToken, hashPassword } from "../auth";
 
 export const Mutation = extendType({
   type: "Mutation",
@@ -13,13 +13,21 @@ export const Mutation = extendType({
       type: TokenType,
       args: {
         username: nonNull(stringArg()),
+        password: nonNull(stringArg()),
       },
       async resolve(_root, args, ctx) {
-        const { username } = args;
+        const { username, password } = args;
         const prisma = ctx.prisma as PrismaClient;
         const user = await prisma.user.findUnique({ where: { username } });
         if (!user) {
           throw new Error("User not found");
+        }
+        const correct = await checkPassword({
+          password,
+          passwordHash: user.passwordHash,
+        });
+        if (!correct) {
+          throw new Error("Incorrect password");
         }
         return {
           token: generateAccessToken(user),
@@ -31,12 +39,14 @@ export const Mutation = extendType({
       type: UserType,
       args: {
         username: nonNull(stringArg()),
+        password: nonNull(stringArg()),
       },
-      resolve(_root, args, ctx) {
-        const { username } = args;
+      async resolve(_root, args, ctx) {
+        const { username, password } = args;
+        const passwordHash = await hashPassword(password);
         return ctx.prisma.user.upsert({
-          where: { username },
-          create: { username },
+          where: { username, passwordHash },
+          create: { username, passwordHash },
           update: {},
         });
       },
