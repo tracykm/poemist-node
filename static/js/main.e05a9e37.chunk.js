@@ -686,18 +686,6 @@
             className: "mx-3",
             children: [
               Object(_.jsx)("h1", { children: c && c.username }),
-              Object(_.jsxs)("div", {
-                children: [
-                  "Poems Written: ",
-                  Object(_.jsx)("strong", { children: 0 }),
-                ],
-              }),
-              Object(_.jsxs)("div", {
-                children: [
-                  "Signed Up: ",
-                  Object(_.jsx)("strong", { children: i }),
-                ],
-              }),
               Object(_.jsxs)("h5", {
                 children: [
                   "Look at all the lovely poems ",
